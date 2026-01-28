@@ -19,25 +19,26 @@ const Hero = () => {
           
           {/* Main headline */}
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-foreground mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-            Mend-AI — connect,{" "}
-            <span className="text-gradient">understand</span>, heal.
+            Because {" "}
+            <span className="text-gradient">You</span> come 
+            <span className="text-gradient"> First</span>
           </h1>
           
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-            Learn why mental health matters, find verified therapists near you (online or in-person), and message them securely — all in one app.
+            Learn why mental health matters, find verified therapists near you (online or in-person), and message them securely, all in one app.
           </p>
           
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <Button variant="hero" asChild>
               <Link to="/auth?role=seeker">
-                Get started — I need support
+                I'm a Seeker
               </Link>
             </Button>
             <Button variant="hero-outline" asChild>
               <Link to="/auth?role=provider">
-                I'm a therapist — register
+                I'm a Provider
               </Link>
             </Button>
           </div>
