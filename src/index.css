@@ -2,95 +2,121 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Mend-AI Design System - Calm, trustworthy, approachable */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Core brand - Calming sage green */
+    --primary: 152 35% 45%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Warm cream backgrounds */
+    --background: 40 30% 98%;
+    --foreground: 220 20% 20%;
+    
+    /* Cards with soft warmth */
+    --card: 40 40% 99%;
+    --card-foreground: 220 20% 20%;
+    
+    /* Popover */
+    --popover: 40 40% 99%;
+    --popover-foreground: 220 20% 20%;
+    
+    /* Secondary - Soft blue-gray */
+    --secondary: 200 20% 94%;
+    --secondary-foreground: 220 20% 25%;
+    
+    /* Muted - Warm gray */
+    --muted: 40 15% 92%;
+    --muted-foreground: 220 10% 45%;
+    
+    /* Accent - Warm coral */
+    --accent: 15 75% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Destructive - Soft red */
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Borders and inputs */
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 152 35% 45%;
+    
+    /* Radius - Rounded and friendly */
+    --radius: 0.75rem;
+    
+    /* Sidebar */
+    --sidebar-background: 40 25% 96%;
+    --sidebar-foreground: 220 20% 25%;
+    --sidebar-primary: 152 35% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 20% 92%;
+    --sidebar-accent-foreground: 220 20% 25%;
+    --sidebar-border: 40 20% 88%;
+    --sidebar-ring: 152 35% 45%;
+    
+    /* Custom tokens for Mend-AI */
+    --sage: 152 35% 45%;
+    --sage-light: 152 30% 92%;
+    --sage-dark: 152 40% 35%;
+    --coral: 15 75% 60%;
+    --coral-light: 15 70% 95%;
+    --cream: 40 30% 98%;
+    --cream-dark: 40 25% 94%;
+    --warm-gray: 220 15% 35%;
+    --trust-blue: 210 60% 50%;
+    --gentle-amber: 35 80% 55%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --primary: 152 35% 55%;
+    --primary-foreground: 220 20% 10%;
+    
+    --background: 220 20% 10%;
+    --foreground: 40 20% 92%;
+    
+    --card: 220 18% 14%;
+    --card-foreground: 40 20% 92%;
+    
+    --popover: 220 18% 14%;
+    --popover-foreground: 40 20% 92%;
+    
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 40 20% 90%;
+    
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+    
+    --accent: 15 65% 50%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 55% 45%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 152 35% 55%;
+    
+    --sidebar-background: 220 18% 12%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 152 35% 55%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 152 35% 55%;
+    
+    --sage: 152 35% 55%;
+    --sage-light: 152 25% 18%;
+    --sage-dark: 152 40% 45%;
+    --coral: 15 65% 50%;
+    --coral-light: 15 50% 18%;
+    --cream: 220 20% 10%;
+    --cream-dark: 220 18% 14%;
+    --warm-gray: 220 10% 70%;
+    --trust-blue: 210 50% 55%;
+    --gentle-amber: 35 70% 50%;
   }
 }
 
@@ -100,6 +126,147 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  /* Gradient utilities */
+  .gradient-sage {
+    background: linear-gradient(135deg, hsl(var(--sage)) 0%, hsl(var(--sage-dark)) 100%);
+  }
+  
+  .gradient-hero {
+    background: linear-gradient(180deg, hsl(var(--cream)) 0%, hsl(var(--sage-light)) 100%);
+  }
+  
+  .gradient-card {
+    background: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--cream-dark)) 100%);
+  }
+  
+  .gradient-warm {
+    background: linear-gradient(135deg, hsl(var(--coral-light)) 0%, hsl(var(--sage-light)) 100%);
+  }
+  
+  /* Glass effect */
+  .glass {
+    backdrop-filter: blur(12px);
+    background: hsl(var(--card) / 0.8);
+  }
+  
+  /* Soft shadow utilities */
+  .shadow-soft {
+    box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.08),
+                0 2px 8px -2px hsl(var(--foreground) / 0.04);
+  }
+  
+  .shadow-soft-lg {
+    box-shadow: 0 8px 40px -8px hsl(var(--foreground) / 0.12),
+                0 4px 16px -4px hsl(var(--foreground) / 0.06);
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 40px -10px hsl(var(--sage) / 0.3);
+  }
+  
+  /* Text gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--sage)) 0%, hsl(var(--sage-dark)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Animation utilities */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+  
+  .animate-slide-left {
+    animation: slideLeft 0.3s ease-out forwards;
+  }
+  
+  .animate-slide-right {
+    animation: slideRight 0.3s ease-out forwards;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }
