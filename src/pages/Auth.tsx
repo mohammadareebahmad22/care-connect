@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, ArrowLeft, User, Stethoscope, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Heart, ArrowLeft, User, Stethoscope, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -26,19 +26,31 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.onAuthStateChange((event, session) => {
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        // Redirect based on profile role
-        navigate("/onboarding");
+        // Check if user has a role
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+        
+        if (roleData?.role) {
+          navigate("/dashboard");
+        } else {
+          navigate("/onboarding");
+        }
       }
-    });
+    };
+    
+    checkExistingSession();
   }, [navigate]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!role) {
+    if (mode === "signup" && !role) {
       toast({
         title: "Please select a role",
         description: "Are you looking for support or are you a therapist?",
@@ -57,12 +69,34 @@ const Auth = () => {
           options: {
             emailRedirectTo: window.location.origin,
             data: {
-              role: role,
+              pending_role: role, // Store temporarily in metadata
             },
           },
         });
         
         if (error) throw error;
+        
+        if (data.user) {
+          // Create profile
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .insert({
+              user_id: data.user.id,
+              full_name: "",
+            });
+          
+          if (profileError) throw profileError;
+          
+          // Create role
+          const { error: roleError } = await supabase
+            .from("user_roles")
+            .insert({
+              user_id: data.user.id,
+              role: role as Role,
+            });
+          
+          if (roleError) throw roleError;
+        }
         
         toast({
           title: "Account created!",
@@ -78,11 +112,29 @@ const Auth = () => {
         
         if (error) throw error;
         
+        // Get user role from database
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id)
+          .maybeSingle();
+        
         toast({
           title: "Welcome back!",
         });
         
-        navigate("/dashboard");
+        // Check if onboarding is complete (profile has name)
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("user_id", data.user.id)
+          .maybeSingle();
+        
+        if (!profileData?.full_name) {
+          navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (error: any) {
       toast({
@@ -96,170 +148,141 @@ const Auth = () => {
   };
   
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Left side - decorative */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-sage p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-foreground/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-foreground/5 rounded-full blur-3xl" />
-        
-        <Link to="/" className="flex items-center gap-2 relative z-10">
-          <div className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center">
-            <Heart className="w-6 h-6 text-primary-foreground" />
-          </div>
-          <span className="font-display text-2xl text-primary-foreground">Mend-AI</span>
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <div className="w-full max-w-sm">
+        {/* Back button */}
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-12"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
         </Link>
         
-        <div className="relative z-10">
-          <h2 className="font-display text-4xl text-primary-foreground mb-4">
-            Your journey to better mental health starts here.
-          </h2>
-          <p className="text-primary-foreground/80 text-lg">
-            Connect with verified therapists who understand your needs.
-          </p>
+        {/* Logo */}
+        <div className="flex items-center gap-3 mb-12">
+          <div className="w-10 h-10 rounded-xl bg-foreground flex items-center justify-center">
+            <Heart className="w-5 h-5 text-background" />
+          </div>
+          <span className="font-display text-2xl text-foreground">Mend-AI</span>
         </div>
         
-        <div className="relative z-10 text-primary-foreground/60 text-sm">
-          Secure. Private. Trusted by thousands.
-        </div>
-      </div>
-      
-      {/* Right side - form */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-md">
-          {/* Back button */}
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to home
-          </Link>
-          
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="w-10 h-10 rounded-xl gradient-sage flex items-center justify-center">
-              <Heart className="w-6 h-6 text-primary-foreground" />
+        <h1 className="text-3xl font-display text-foreground mb-2">
+          {mode === "signup" ? "Create account" : "Welcome back"}
+        </h1>
+        <p className="text-muted-foreground mb-8">
+          {mode === "signup"
+            ? "Start your journey to better mental health"
+            : "Sign in to continue"}
+        </p>
+        
+        {/* Role selection - only show on signup */}
+        {mode === "signup" && (
+          <div className="mb-8">
+            <Label className="text-sm text-muted-foreground mb-3 block">I am a...</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setRole("seeker")}
+                className={`p-4 rounded-lg border text-left transition-all ${
+                  role === "seeker"
+                    ? "border-foreground bg-foreground/5"
+                    : "border-border hover:border-foreground/30"
+                }`}
+              >
+                <User className={`w-5 h-5 mb-2 ${role === "seeker" ? "text-foreground" : "text-muted-foreground"}`} />
+                <div className="font-medium text-foreground text-sm">Seeker</div>
+                <div className="text-xs text-muted-foreground">Find support</div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => setRole("provider")}
+                className={`p-4 rounded-lg border text-left transition-all ${
+                  role === "provider"
+                    ? "border-foreground bg-foreground/5"
+                    : "border-border hover:border-foreground/30"
+                }`}
+              >
+                <Stethoscope className={`w-5 h-5 mb-2 ${role === "provider" ? "text-foreground" : "text-muted-foreground"}`} />
+                <div className="font-medium text-foreground text-sm">Therapist</div>
+                <div className="text-xs text-muted-foreground">Help others</div>
+              </button>
             </div>
-            <span className="font-display text-2xl text-foreground">Mend-AI</span>
+          </div>
+        )}
+        
+        {/* Auth form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="email" className="text-muted-foreground">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1.5 h-11"
+              required
+            />
           </div>
           
-          <h1 className="font-display text-3xl text-foreground mb-2">
-            {mode === "signup" ? "Create your account" : "Welcome back"}
-          </h1>
-          <p className="text-muted-foreground mb-8">
-            {mode === "signup"
-              ? "Start your journey to better mental health"
-              : "Sign in to continue your journey"}
-          </p>
-          
-          {/* Role selection */}
-          {mode === "signup" && (
-            <div className="mb-6">
-              <Label className="text-sm font-medium mb-3 block">I am...</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setRole("seeker")}
-                  className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                    role === "seeker"
-                      ? "border-sage bg-sage-light"
-                      : "border-border hover:border-sage/50"
-                  }`}
-                >
-                  <User className={`w-6 h-6 mb-2 ${role === "seeker" ? "text-sage" : "text-muted-foreground"}`} />
-                  <div className="font-medium text-foreground">Looking for support</div>
-                  <div className="text-xs text-muted-foreground">Find a therapist</div>
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => setRole("provider")}
-                  className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                    role === "provider"
-                      ? "border-sage bg-sage-light"
-                      : "border-border hover:border-sage/50"
-                  }`}
-                >
-                  <Stethoscope className={`w-6 h-6 mb-2 ${role === "provider" ? "text-sage" : "text-muted-foreground"}`} />
-                  <div className="font-medium text-foreground">Therapist</div>
-                  <div className="text-xs text-muted-foreground">Help others heal</div>
-                </button>
-              </div>
+          <div>
+            <Label htmlFor="password" className="text-muted-foreground">Password</Label>
+            <div className="relative mt-1.5">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-11 pr-10"
+                required
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
+          </div>
+          
+          <Button 
+            type="submit" 
+            className="w-full h-11 bg-foreground text-background hover:bg-foreground/90" 
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : mode === "signup" ? "Create account" : "Sign in"}
+          </Button>
+        </form>
+        
+        {/* Toggle mode */}
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          {mode === "signup" ? (
+            <>
+              Already have an account?{" "}
+              <button
+                onClick={() => setMode("signin")}
+                className="text-foreground hover:underline font-medium"
+              >
+                Sign in
+              </button>
+            </>
+          ) : (
+            <>
+              Don't have an account?{" "}
+              <button
+                onClick={() => setMode("signup")}
+                className="text-foreground hover:underline font-medium"
+              >
+                Sign up
+              </button>
+            </>
           )}
-          
-          {/* Auth form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <div className="relative mt-1">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <div className="relative mt-1">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-            
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-              {isLoading ? "Loading..." : mode === "signup" ? "Create account" : "Sign in"}
-            </Button>
-          </form>
-          
-          {/* Toggle mode */}
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            {mode === "signup" ? (
-              <>
-                Already have an account?{" "}
-                <button
-                  onClick={() => setMode("signin")}
-                  className="text-sage hover:text-sage-dark font-medium"
-                >
-                  Sign in
-                </button>
-              </>
-            ) : (
-              <>
-                Don't have an account?{" "}
-                <button
-                  onClick={() => setMode("signup")}
-                  className="text-sage hover:text-sage-dark font-medium"
-                >
-                  Sign up
-                </button>
-              </>
-            )}
-          </p>
-        </div>
+        </p>
       </div>
     </div>
   );

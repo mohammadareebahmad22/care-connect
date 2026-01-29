@@ -4,9 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import SeekerOnboarding from "./SeekerOnboarding";
 import ProviderOnboarding from "./ProviderOnboarding";
 
+type UserRole = "seeker" | "provider";
+
 const Onboarding = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState<string | null>(null);
+  const [role, setRole] = useState<UserRole | null>(null);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -18,9 +20,21 @@ const Onboarding = () => {
         return;
       }
       
-      // Get role from user metadata
-      const userRole = user.user_metadata?.role || "seeker";
-      setRole(userRole);
+      // Get role from database
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (roleData?.role) {
+        setRole(roleData.role as UserRole);
+      } else {
+        // No role found, redirect to auth
+        navigate("/auth");
+        return;
+      }
+      
       setLoading(false);
     };
     
@@ -30,7 +44,7 @@ const Onboarding = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">Loading...</div>
       </div>
     );
   }
