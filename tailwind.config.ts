@@ -61,23 +61,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Custom Mend-AI colors
-        sage: {
-          DEFAULT: "hsl(var(--sage))",
-          light: "hsl(var(--sage-light))",
-          dark: "hsl(var(--sage-dark))",
-        },
-        coral: {
-          DEFAULT: "hsl(var(--coral))",
-          light: "hsl(var(--coral-light))",
-        },
-        cream: {
-          DEFAULT: "hsl(var(--cream))",
-          dark: "hsl(var(--cream-dark))",
-        },
-        "warm-gray": "hsl(var(--warm-gray))",
-        "trust-blue": "hsl(var(--trust-blue))",
-        "gentle-amber": "hsl(var(--gentle-amber))",
       },
       borderRadius: {
         lg: "var(--radius)",
